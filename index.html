@@ -20,8 +20,8 @@
         
         .category-filter {
             padding: 10px 20px;
-            background: var(--panel);
-            border: 2px solid var(--border);
+            background: var(--card-bg);
+            border: 2px solid var(--base1);
             border-radius: 8px;
             color: var(--primary);
             cursor: pointer;
@@ -66,7 +66,7 @@
         .doc-tag {
             padding: 4px 10px;
             background: var(--entry);
-            border: 1px solid var(--border);
+            border: 1px solid var(--base1);
             border-radius: 4px;
             font-size: 0.75rem;
             color: var(--secondary);
@@ -138,108 +138,189 @@
     <p>Get in touch: <a href="mailto:okamotoshoei451@gmail.com">okamotoshoei451@gmail.com</a></p>
 </footer>
 
-<!-- Scripts - 読み込み順序が重要！ -->
+<!-- Scripts -->
 <script src="js/theme-toggle.js"></script>
-<script src="js/documents-data.js"></script>
 
-<!-- カテゴリー別ドキュメントを読み込む -->
-<script src="js/documents/math.js"></script>
-<script src="js/documents/english.js"></script>
-<script src="js/documents/programming.js"></script>
-<!-- 他のカテゴリーファイルがあればここに追加 -->
-
-<!-- ドキュメントを統合 -->
-<script src="js/documents-loader.js"></script>
-
-<!-- UI生成スクリプト -->
 <script>
-    // カテゴリーフィルター生成
-    function generateCategoryFilters() {
-        const filtersContainer = document.getElementById('categoryFilters');
-        const categories = getAllCategories();
-        
-        Object.keys(categories).forEach(key => {
-            const cat = categories[key];
-            const button = document.createElement('button');
-            button.className = 'category-filter';
-            button.dataset.category = key;
-            button.innerHTML = `${cat.icon} ${cat.name}`;
-            button.onclick = () => filterByCategory(key);
-            filtersContainer.appendChild(button);
-        });
-    }
-    
-    // ドキュメントカード生成
-    function generateDocumentCards(documents = documentsData.documents) {
-        const container = document.getElementById('documentsContainer');
-        container.innerHTML = '';
-        
-        if (documents.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <h3>ドキュメントが見つかりません</h3>
-                    <p>別のカテゴリーを選択してください</p>
-                </div>
-            `;
-            return;
+// ==========================================
+// データ定義（すべて1つのファイルに統合）
+// ==========================================
+
+const documentsData = {
+    categories: {
+        'math': {
+            name: 'Math',
+            icon: '📐',
+            color: '#b58900'
+        },
+        'english': {
+            name: 'English',
+            icon: '📚',
+            color: '#2aa198'
+        },
+        'science': {
+            name: 'Science',
+            icon: '🔬',
+            color: '#859900'
+        },
+        'history': {
+            name: 'History',
+            icon: '📜',
+            color: '#cb4b16'
+        },
+        'programming': {
+            name: 'Programming',
+            icon: '💻',
+            color: '#268bd2'
+        },
+        'other': {
+            name: 'Other',
+            icon: '📄',
+            color: '#6c71c4'
         }
-        
-        documents.forEach(doc => {
-            const card = document.createElement('a');
-            card.className = `card doc-card${doc.protected ? ' protected' : ''}`;
-            card.href = `viewer.html?id=${doc.id}`;
-            
-            const category = documentsData.categories[doc.category];
-            
-            card.innerHTML = `
-                <div class="card-icon">${category.icon}</div>
-                <h3>${doc.title}</h3>
-                <p>${doc.description}</p>
-                <div class="doc-tags">
-                    ${doc.tags.map(tag => `<span class="doc-tag">${tag}</span>`).join('')}
-                </div>
-            `;
-            
-            container.appendChild(card);
-        });
-    }
+    },
     
-    // カテゴリーフィルター
-    function filterByCategory(category) {
-        // フィルターボタンのアクティブ状態を更新
-        document.querySelectorAll('.category-filter').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelector(`[data-category="${category}"]`).classList.add('active');
+    documents: [
+        // 数学
+        {
+            id: 'doc-math-001',
+            title: '三角関数の基礎',
+            category: 'math',
+            description: 'sin, cos, tanの基本から応用まで',
+            file: 'math/trigonometry-basics.md',
+            protected: false,
+            tags: ['数学', '三角関数', '基礎']
+        },
+        {
+            id: 'doc-math-protected-001',
+            title: '定期試験対策：数学',
+            category: 'math',
+            description: '来週の試験範囲のまとめ',
+            file: null,
+            protected: true,
+            supabaseId: 'exam-math-2024',
+            tags: ['数学', '試験対策', '限定公開']
+        },
         
-        // ドキュメントをフィルター
-        if (category === 'all') {
-            generateDocumentCards();
-        } else {
-            const filtered = getDocumentsByCategory(category);
-            generateDocumentCards(filtered);
+        // 英語
+        {
+            id: 'doc-english-001',
+            title: '英文法：仮定法',
+            category: 'english',
+            description: '仮定法過去・仮定法過去完了の使い方',
+            file: 'english/subjunctive-mood.md',
+            protected: false,
+            tags: ['英語', '文法', '仮定法']
+        },
+        
+        // プログラミング
+        {
+            id: 'doc-programming-001',
+            title: 'JavaScript基礎',
+            category: 'programming',
+            description: '変数、関数、オブジェクトの基本',
+            file: 'programming/javascript-basics.md',
+            protected: false,
+            tags: ['プログラミング', 'JavaScript', '基礎']
         }
+    ]
+};
+
+// ==========================================
+// ユーティリティ関数
+// ==========================================
+
+function getDocumentsByCategory(category) {
+    return documentsData.documents.filter(doc => doc.category === category);
+}
+
+function getDocumentById(id) {
+    return documentsData.documents.find(doc => doc.id === id);
+}
+
+function getAllCategories() {
+    return documentsData.categories;
+}
+
+// ==========================================
+// UI生成関数
+// ==========================================
+
+function generateCategoryFilters() {
+    const filtersContainer = document.getElementById('categoryFilters');
+    const categories = getAllCategories();
+    
+    Object.keys(categories).forEach(key => {
+        const cat = categories[key];
+        const button = document.createElement('button');
+        button.className = 'category-filter';
+        button.dataset.category = key;
+        button.innerHTML = `${cat.icon} ${cat.name}`;
+        button.onclick = () => filterByCategory(key);
+        filtersContainer.appendChild(button);
+    });
+}
+
+function generateDocumentCards(documents = documentsData.documents) {
+    const container = document.getElementById('documentsContainer');
+    container.innerHTML = '';
+    
+    if (documents.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>ドキュメントが見つかりません</h3>
+                <p>別のカテゴリーを選択してください</p>
+            </div>
+        `;
+        return;
     }
     
-    // ページ読み込み時に実行 - わずかに遅延させて確実にロード
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializePage);
-    } else {
-        // すでにDOMが読み込まれている場合は即実行
-        initializePage();
-    }
-    
-    function initializePage() {
-        // デバッグ用：コンソールに出力
-        console.log('Initializing page...');
-        console.log('Documents loaded:', documentsData.documents.length);
-        console.log('Categories:', getAllCategories());
+    documents.forEach(doc => {
+        const card = document.createElement('a');
+        card.className = `card doc-card${doc.protected ? ' protected' : ''}`;
+        card.href = `viewer.html?id=${doc.id}`;
         
-        generateCategoryFilters();
+        const category = documentsData.categories[doc.category];
+        
+        card.innerHTML = `
+            <div class="card-icon">${category.icon}</div>
+            <h3>${doc.title}</h3>
+            <p>${doc.description}</p>
+            <div class="doc-tags">
+                ${doc.tags.map(tag => `<span class="doc-tag">${tag}</span>`).join('')}
+            </div>
+        `;
+        
+        container.appendChild(card);
+    });
+}
+
+function filterByCategory(category) {
+    // フィルターボタンのアクティブ状態を更新
+    document.querySelectorAll('.category-filter').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-category="${category}"]`).classList.add('active');
+    
+    // ドキュメントをフィルター
+    if (category === 'all') {
         generateDocumentCards();
-        
-        console.log('Page initialized successfully!');
+    } else {
+        const filtered = getDocumentsByCategory(category);
+        generateDocumentCards(filtered);
     }
+}
+
+// ==========================================
+// 初期化
+// ==========================================
+
+// ページ読み込み完了後に実行
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('Documents loaded:', documentsData.documents.length);
+    generateCategoryFilters();
+    generateDocumentCards();
+});
 </script>
 
 </body>
