@@ -153,7 +153,7 @@
 
 <header>
   <img src="images/favicon-md.png" alt="Markdown Icon" width="200" />
-  <h1>📝 Markdown Viewer</h1>
+  <h1>📑 Markdown Viewer</h1>
   <p>Display Markdown files in a clean, readable format</p>
 </header>
 
@@ -249,7 +249,7 @@ function renderPosts(posts) {
         ${post.tags.map(tag => `<span class="blog-tag">${tagLabels[tag] || tag}</span>`).join('')}
       </div>
       <p>${post.excerpt}</p>
-      <span class="read-more">続きを読む →</span>
+      <span class="read-more">記事を読む</span>
     `;
     
     blogGrid.appendChild(card);
