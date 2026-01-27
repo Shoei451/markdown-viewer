@@ -138,7 +138,7 @@
     <p>Get in touch: <a href="mailto:okamotoshoei451@gmail.com">okamotoshoei451@gmail.com</a></p>
 </footer>
 
-<!-- Scripts -->
+<!-- Scripts - bodyの最後に配置することでDOM要素が確実に存在 -->
 <script src="js/theme-toggle.js"></script>
 
 <script>
@@ -312,26 +312,21 @@ function filterByCategory(category) {
 }
 
 // ==========================================
-// 初期化
+// 初期化 - スクリプトがbodyの最後にあるので即座に実行可能
 // ==========================================
 
-function initializePage() {
-    console.log('Initializing page...');
-    console.log('Documents loaded:', documentsData.documents.length);
-    generateCategoryFilters();
-    generateDocumentCards();
-    console.log('Page initialized!');
-}
+console.log('Script loaded, readyState:', document.readyState);
+console.log('Documents loaded:', documentsData.documents.length);
 
-// ページ読み込み完了後に実行
-// document.readyStateをチェックして確実に実行
-if (document.readyState === 'loading') {
-    // まだHTMLパース中
-    document.addEventListener('DOMContentLoaded', initializePage);
-} else {
-    // 既にDOMは準備完了（スクリプトが遅れて読み込まれた場合）
-    initializePage();
-}
+// DOM要素が存在することを確認
+console.log('Container exists:', document.getElementById('documentsContainer') !== null);
+console.log('Filters exists:', document.getElementById('categoryFilters') !== null);
+
+// 即座に実行
+generateCategoryFilters();
+generateDocumentCards();
+
+console.log('Page initialized!');
 </script>
 
 </body>
