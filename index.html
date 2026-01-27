@@ -7,51 +7,41 @@
     <title>Docs for learning — 451-Solarized</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
-        /* Category filter styles - Redesigned with Solarized theme */
+        /* Category filter styles */
         .filter-section {
-            max-width: 900px;
-            margin: 30px auto 40px;
+            max-width: 1200px;
+            margin: 20px auto 40px;
             padding: 0 20px;
-        }
-        
-        .filter-wrapper {
             display: flex;
-            gap: 10px;
-            padding: 6px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            gap: 12px;
             flex-wrap: wrap;
-            backdrop-filter: blur(10px);
+            justify-content: center;
         }
         
         .category-filter {
-            flex: 1;
-            min-width: 120px;
+            padding: 10px 20px;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            padding: 14px 20px;
-            border: none;
-            background: transparent;
-            color: var(--secondary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            font-weight: 500;
         }
         
         .category-filter:hover {
-            background: var(--panel);
-            color: var(--primary);
+            background: var(--accent);
+            color: var(--base3);
+            border-color: var(--accent);
         }
         
         .category-filter.active {
             background: var(--accent);
             color: var(--base3);
-            box-shadow: 0 4px 12px var(--shadow);
+            border-color: var(--accent);
         }
         
         .doc-card {
@@ -93,18 +83,6 @@
             color: var(--primary);
             margin-bottom: 10px;
         }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .filter-wrapper {
-                flex-direction: column;
-            }
-            
-            .category-filter {
-                width: 100%;
-                min-width: unset;
-            }
-        }
     </style>
 </head>
 <body>
@@ -143,13 +121,11 @@
     🔒マークがついているドキュメントはパスワード保護されています。</p>
 </section>
 
-<!-- Category Filters - Redesigned -->
-<div class="filter-section">
-    <div class="filter-wrapper" id="categoryFilters">
-        <button class="category-filter active" data-category="all">
-            📋 すべて
-        </button>
-    </div>
+<!-- Category Filters -->
+<div class="filter-section" id="categoryFilters">
+    <button class="category-filter active" data-category="all">
+        📋 すべて
+    </button>
 </div>
 
 <!-- Documents Cards -->
@@ -162,9 +138,20 @@
     <p>Get in touch: <a href="mailto:okamotoshoei451@gmail.com">okamotoshoei451@gmail.com</a></p>
 </footer>
 
-<!-- Scripts -->
+<!-- Scripts - 読み込み順序が重要！ -->
 <script src="js/theme-toggle.js"></script>
 <script src="js/documents-data.js"></script>
+
+<!-- カテゴリー別ドキュメントを読み込む -->
+<script src="js/documents/math.js"></script>
+<script src="js/documents/english.js"></script>
+<script src="js/documents/programming.js"></script>
+<!-- 他のカテゴリーファイルがあればここに追加 -->
+
+<!-- ドキュメントを統合 -->
+<script src="js/documents-loader.js"></script>
+
+<!-- UI生成スクリプト -->
 <script>
     // カテゴリーフィルター生成
     function generateCategoryFilters() {
@@ -236,6 +223,10 @@
     
     // ページ読み込み時に実行
     document.addEventListener('DOMContentLoaded', () => {
+        // デバッグ用：コンソールに出力
+        console.log('Documents loaded:', documentsData.documents.length);
+        console.log('Documents:', documentsData.documents);
+        
         generateCategoryFilters();
         generateDocumentCards();
     });
