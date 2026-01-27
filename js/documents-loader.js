@@ -31,37 +31,12 @@
         // documentsData.documents に統合
         if (typeof documentsData !== 'undefined') {
             documentsData.documents = allDocuments;
+            console.log('Documents loaded by loader:', allDocuments.length);
         }
         
         return allDocuments;
     }
     
-    // ページ読み込み時に実行
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadAllDocuments);
-    } else {
-        loadAllDocuments();
-    }
+    // 即座に実行（DOMContentLoadedを待たない）
+    loadAllDocuments();
 })();
-
-// カテゴリー別にドキュメントを取得する関数
-function getDocumentsByCategory(category) {
-    return documentsData.documents.filter(doc => doc.category === category);
-}
-
-// IDでドキュメントを取得する関数
-function getDocumentById(id) {
-    return documentsData.documents.find(doc => doc.id === id);
-}
-
-// すべてのカテゴリーを取得
-function getAllCategories() {
-    return documentsData.categories;
-}
-
-// タグで検索
-function searchByTag(tag) {
-    return documentsData.documents.filter(doc => 
-        doc.tags.some(t => t.toLowerCase().includes(tag.toLowerCase()))
-    );
-}

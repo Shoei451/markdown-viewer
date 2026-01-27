@@ -221,15 +221,25 @@
         }
     }
     
-    // ページ読み込み時に実行
-    document.addEventListener('DOMContentLoaded', () => {
+    // ページ読み込み時に実行 - わずかに遅延させて確実にロード
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializePage);
+    } else {
+        // すでにDOMが読み込まれている場合は即実行
+        initializePage();
+    }
+    
+    function initializePage() {
         // デバッグ用：コンソールに出力
+        console.log('Initializing page...');
         console.log('Documents loaded:', documentsData.documents.length);
-        console.log('Documents:', documentsData.documents);
+        console.log('Categories:', getAllCategories());
         
         generateCategoryFilters();
         generateDocumentCards();
-    });
+        
+        console.log('Page initialized successfully!');
+    }
 </script>
 
 </body>
