@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/favicon-solar.png" />
+    <title>ドキュメント — 451-Solarized</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/markdown-viewer.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<span class="logo-switches">
+    <button id="theme-toggle" title="テーマ切替">
+        <svg id="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg id="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
+</span>
+
+<!-- Password Overlay (only shown for protected documents) -->
+<div id="passwordOverlay" class="password-overlay" style="display: none;">
+    <div class="password-card">
+        <h2>🔒 保護されたドキュメント</h2>
+        <p class="doc-title" id="protectedDocTitle"></p>
+        
+        <div class="password-input-group">
+            <label for="passwordInput">パスワード</label>
+            <input type="password" id="passwordInput" placeholder="パスワードを入力">
+        </div>
+        
+        <button class="password-submit" onclick="verifyPassword()">アクセス</button>
+        
+        <p class="password-error" id="passwordError"></p>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="index.html" style="color: var(--secondary); font-size: 0.9rem;">← ドキュメント一覧に戻る</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="markdown-viewer-container">
+    <a href="index.html" class="back-link">← ドキュメント一覧に戻る</a>
+    
+    <div id="loadingState" class="loading-spinner"></div>
+    
+    <div id="documentContent" style="display: none;">
+        <div class="doc-header">
+            <h1 id="docTitle"></h1>
+            <div class="doc-meta">
+                <div class="doc-meta-item">
+                    <span id="docIcon"></span>
+                    <span id="docCategory"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="markdown-content" id="markdownContent"></div>
+        
+        <div class="doc-navigation">
+            <a href="index.html" class="nav-link">📚 ドキュメント一覧</a>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>Get in touch: <a href="mailto:okamotoshoei451@gmail.com">okamotoshoei451@gmail.com</a></p>
+</footer>
+
+<!-- Scripts -->
+<script src="js/theme-toggle.js"></script>
+<script src="js/documents-data.js"></script>
+<script>
+    // Supabase Configuration (Replace with your actual credentials)
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    
+    let supabase = null;
+    let currentDocument = null;
+    
+    // Initialize Supabase only if credentials are provided
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    
+    // Get document ID from URL
+    function getDocumentIdFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
+    }
+    
+    // Load unprotected document from file
+    async function loadUnprotectedDocument(doc) {
+        try {
+            const response = await fetch(`markdowns/${doc.file}`);
+            if (!response.ok) throw new Error('ファイルの読み込みに失敗しました');
+            
+            const markdown = await response.text();
+            displayDocument(doc, markdown);
+        } catch (error) {
+            showError('ドキュメントの読み込みに失敗しました: ' + error.message);
+        }
+    }
+    
+    // Show password overlay for protected documents
+    function showPasswordOverlay(doc) {
+        document.getElementById('protectedDocTitle').textContent = doc.title;
+        document.getElementById('passwordOverlay').style.display = 'flex';
+        document.getElementById('loadingState').style.display = 'none';
+        
+        // Enter key to submit
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+        
+        setTimeout(() => {
+            document.getElementById('passwordInput').focus();
+        }, 100);
+    }
+    
+    // Verify password and load protected document
+    async function verifyPassword() {
+        if (!supabase) {
+            showPasswordError('Supabaseが設定されていません');
+            return;
+        }
+        
+        const password = document.getElementById('passwordInput').value;
+        const errorEl = document.getElementById('passwordError');
+        
+        errorEl.classList.remove('show');
+        
+        if (!password) {
+            showPasswordError('パスワードを入力してください');
+            return;
+        }
+        
+        try {
+            // Call Supabase RPC function
+            const { data, error } = await supabase.rpc('verify_and_get_document', {
+                doc_id: currentDocument.supabaseId,
+                user_password: password
+            });
+            
+            if (error) {
+                console.error('Supabase error:', error);
+                showPasswordError('認証エラーが発生しました');
+                return;
+            }
+            
+            if (!data || !data.content) {
+                showPasswordError('パスワードが正しくありません');
+                return;
+            }
+            
+            // Hide overlay and display document
+            document.getElementById('passwordOverlay').style.display = 'none';
+            displayDocument(currentDocument, data.content);
+            
+        } catch (err) {
+            console.error('Exception:', err);
+            showPasswordError('予期しないエラーが発生しました');
+        }
+    }
+    
+    // Show password error
+    function showPasswordError(message) {
+        const errorEl = document.getElementById('passwordError');
+        errorEl.textContent = message;
+        errorEl.classList.add('show');
+    }
+    
+    // Display document content
+    function displayDocument(doc, markdown) {
+        const category = documentsData.categories[doc.category];
+        
+        document.getElementById('docTitle').textContent = doc.title;
+        document.getElementById('docIcon').textContent = category.icon;
+        document.getElementById('docCategory').textContent = category.name;
+        
+        // Parse and render markdown
+        const htmlContent = marked.parse(markdown);
+        document.getElementById('markdownContent').innerHTML = htmlContent;
+        
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('documentContent').style.display = 'block';
+        
+        // Update page title
+        document.title = `${doc.title} — 451-Solarized`;
+    }
+    
+    // Show error message
+    function showError(message) {
+        document.getElementById('loadingState').innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+                <h2 style="color: var(--red); margin-bottom: 15px;">エラー</h2>
+                <p style="color: var(--secondary);">${message}</p>
+                <a href="index.html" class="back-link" style="margin-top: 20px; display: inline-flex;">
+                    ← ドキュメント一覧に戻る
+                </a>
+            </div>
+        `;
+    }
+    
+    // Initialize page
+    async function init() {
+        const docId = getDocumentIdFromURL();
+        
+        if (!docId) {
+            showError('ドキュメントIDが指定されていません');
+            return;
+        }
+        
+        const doc = getDocumentById(docId);
+        
+        if (!doc) {
+            showError('ドキュメントが見つかりません');
+            return;
+        }
+        
+        currentDocument = doc;
+        
+        if (doc.protected) {
+            // Show password overlay for protected documents
+            showPasswordOverlay(doc);
+        } else {
+            // Load unprotected document directly
+            await loadUnprotectedDocument(doc);
+        }
+    }
+    
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
