@@ -7,41 +7,51 @@
     <title>Docs for learning — 451-Solarized</title>
     <link rel="stylesheet" href="css/common.css">
     <style>
-        /* Category filter styles */
+        /* Category filter styles - Redesigned with Solarized theme */
         .filter-section {
-            max-width: 1200px;
-            margin: 20px auto 40px;
+            max-width: 900px;
+            margin: 30px auto 40px;
             padding: 0 20px;
+        }
+        
+        .filter-wrapper {
             display: flex;
-            gap: 12px;
+            gap: 10px;
+            padding: 6px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
             flex-wrap: wrap;
-            justify-content: center;
+            backdrop-filter: blur(10px);
         }
         
         .category-filter {
-            padding: 10px 20px;
-            background: var(--panel);
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            color: var(--primary);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
+            flex: 1;
+            min-width: 120px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            color: var(--secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
         
         .category-filter:hover {
-            background: var(--accent);
-            color: var(--base3);
-            border-color: var(--accent);
+            background: var(--panel);
+            color: var(--primary);
         }
         
         .category-filter.active {
             background: var(--accent);
             color: var(--base3);
-            border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--shadow);
         }
         
         .doc-card {
@@ -83,6 +93,18 @@
             color: var(--primary);
             margin-bottom: 10px;
         }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .filter-wrapper {
+                flex-direction: column;
+            }
+            
+            .category-filter {
+                width: 100%;
+                min-width: unset;
+            }
+        }
     </style>
 </head>
 <body>
@@ -121,11 +143,13 @@
     🔒マークがついているドキュメントはパスワード保護されています。</p>
 </section>
 
-<!-- Category Filters -->
-<div class="filter-section" id="categoryFilters">
-    <button class="category-filter active" data-category="all">
-        📋 すべて
-    </button>
+<!-- Category Filters - Redesigned -->
+<div class="filter-section">
+    <div class="filter-wrapper" id="categoryFilters">
+        <button class="category-filter active" data-category="all">
+            📋 すべて
+        </button>
+    </div>
 </div>
 
 <!-- Documents Cards -->
