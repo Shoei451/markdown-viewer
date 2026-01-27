@@ -110,21 +110,21 @@
 <!-- Header -->
 <header>
     <div style="font-size: 4rem; margin-bottom: 20px;">📚</div>
-    <h1>Docs for learning</h1>
-    <p>Various learning resources for high school students</p>
+    <h1>学習ドキュメント</h1>
+    <p>高校生のための学習リソース集</p>
 </header>
 
 <!-- Introduction -->
 <section class="intro">
-    <h2>Welcome</h2>
-    <p>Various learning resources for high school students.<br>
-    🔒 Documents with a lock icon are password protected.</p>
+    <h2>ようこそ</h2>
+    <p>各科目の学習ドキュメントをカテゴリー別に整理しています。<br>
+    🔒マークがついているドキュメントはパスワード保護されています。</p>
 </section>
 
 <!-- Category Filters -->
 <div class="filter-section" id="categoryFilters">
     <button class="category-filter active" data-category="all">
-        All
+        📋 すべて
     </button>
 </div>
 
@@ -149,32 +149,32 @@
 const documentsData = {
     categories: {
         'math': {
-            name: 'Math',
+            name: '数学',
             icon: '📐',
             color: '#b58900'
         },
         'english': {
-            name: 'English',
+            name: '英語',
             icon: '📚',
             color: '#2aa198'
         },
         'science': {
-            name: 'Science',
+            name: '理科',
             icon: '🔬',
             color: '#859900'
         },
         'history': {
-            name: 'History',
+            name: '歴史',
             icon: '📜',
             color: '#cb4b16'
         },
         'programming': {
-            name: 'Programming',
+            name: 'プログラミング',
             icon: '💻',
             color: '#268bd2'
         },
         'other': {
-            name: 'Other',
+            name: 'その他',
             icon: '📄',
             color: '#6c71c4'
         }
@@ -315,12 +315,23 @@ function filterByCategory(category) {
 // 初期化
 // ==========================================
 
-// ページ読み込み完了後に実行
-window.addEventListener('DOMContentLoaded', () => {
+function initializePage() {
+    console.log('Initializing page...');
     console.log('Documents loaded:', documentsData.documents.length);
     generateCategoryFilters();
     generateDocumentCards();
-});
+    console.log('Page initialized!');
+}
+
+// ページ読み込み完了後に実行
+// document.readyStateをチェックして確実に実行
+if (document.readyState === 'loading') {
+    // まだHTMLパース中
+    document.addEventListener('DOMContentLoaded', initializePage);
+} else {
+    // 既にDOMは準備完了（スクリプトが遅れて読み込まれた場合）
+    initializePage();
+}
 </script>
 
 </body>
