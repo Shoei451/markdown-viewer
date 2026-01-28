@@ -3,11 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微分積分の基礎 — Shoei451</title>
-  <link rel="icon" type="image/png" href="../images/favicon-md.png" />
-  <link rel="stylesheet" href="../css/common.css" />
+  <title>Blog Post — Shoei451</title>
+  <link rel="icon" type="image/png" href="../../images/favicon-md.png" />
+  <link rel="stylesheet" href="../../css/common.css" />
+  
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   
   <style>
+    /* Math rendering styles */
+    .katex {
+      font-size: 1.1em;
+    }
+
+    .katex-display {
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .math-error {
+      color: var(--red);
+      background: var(--theme);
+      padding: 10px;
+      border-radius: 5px;
+      border-left: 4px solid var(--red);
+      margin: 1rem 0;
+    }
+
     .post-wrapper {
       max-width: 850px;
       margin: 60px auto 100px;
@@ -255,17 +279,16 @@
 </span>
 
 <main class="post-wrapper">
-  <a href="../index.html" class="back-link">← Back to Blog</a>
+  <a href="../../index.html" class="back-link">← Back to Blog</a>
   
   <div class="post-header">
-    <h1>微分積分の基礎</h1>
+    <h1 id="post-title">記事タイトル</h1>
     <div class="post-meta">
-      <span class="post-meta-item">📅 2026-01-13</span>
-      <span class="post-meta-item">⏱️ 5 min read</span>
+      <span class="post-meta-item">📅 <span id="post-date">2026-01-13</span></span>
+      <span class="post-meta-item">⏱️ <span id="read-time">5</span> min read</span>
     </div>
-    <div class="post-tags">
-      <span class="post-tag">数学</span>
-      <span class="post-tag">微積分</span>
+    <div class="post-tags" id="post-tags">
+      <!-- Tags will be inserted here -->
     </div>
   </div>
 
@@ -274,13 +297,13 @@
   </article>
 
   <nav class="post-navigation">
-    <a href="post-2.html" class="nav-link">
+    <a href="#" class="nav-link">
       <div class="nav-label">← Previous</div>
-      <div class="nav-title">英語プレゼンのコツ</div>
+      <div class="nav-title">前の記事</div>
     </a>
-    <a href="post-3.html" class="nav-link" style="text-align: right;">
+    <a href="#" class="nav-link" style="text-align: right;">
       <div class="nav-label">Next →</div>
-      <div class="nav-title">第二次世界大戦の多角的視点</div>
+      <div class="nav-title">次の記事</div>
     </a>
   </nav>
 </main>
@@ -290,36 +313,45 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="../js/theme-toggle.js"></script>
+<script src="../../js/theme-toggle.js"></script>
+<script src="../../js/markdown-renderer.js"></script>
 
 <script>
-marked.setOptions({
-  breaks: true,
-  gfm: true
+// ==========================================
+// Post Configuration
+// ==========================================
+const POST_META = {
+  title: "記事タイトル",
+  date: "2026-01-13",
+  tags: ["タグ1", "タグ2"],
+  markdownFile: "post-example.md",  // カテゴリフォルダ内のMarkdownファイル
+  readTime: 5  // 読了時間（分）
+};
+
+// ==========================================
+// Set post metadata
+// ==========================================
+document.getElementById('post-title').textContent = POST_META.title;
+document.getElementById('post-date').textContent = POST_META.date;
+document.getElementById('read-time').textContent = POST_META.readTime;
+document.title = `${POST_META.title} — Shoei451`;
+
+// Render tags
+const tagsContainer = document.getElementById('post-tags');
+POST_META.tags.forEach(tag => {
+  const tagEl = document.createElement('span');
+  tagEl.className = 'post-tag';
+  tagEl.textContent = tag;
+  tagsContainer.appendChild(tagEl);
 });
 
-async function loadMarkdown(filepath) {
-  const content = document.getElementById('markdown-content');
-  
-  try {
-    const response = await fetch(filepath);
-    if (!response.ok) throw new Error('File not found');
-    
-    const markdown = await response.text();
-    content.innerHTML = marked.parse(markdown);
-    
-  } catch (error) {
-    content.innerHTML = `
-      <div style="text-align: center; padding: 40px;">
-        <h2>⚠️ ファイルが見つかりません</h2>
-        <p>記事を読み込めませんでした。</p>
-      </div>
-    `;
-  }
-}
-
-// Load the markdown file for this post
-loadMarkdown('post-1.md');
+// ==========================================
+// Load and render markdown
+// ==========================================
+window.addEventListener('DOMContentLoaded', async () => {
+  const contentElement = document.getElementById('markdown-content');
+  await markdownRenderer.loadAndRender(POST_META.markdownFile, contentElement);
+});
 </script>
 
 </body>
