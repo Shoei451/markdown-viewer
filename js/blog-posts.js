@@ -104,17 +104,6 @@ const publicPosts = [
     protected: false,
     readTime: 8
   },
-  {
-    id: "geo-1-mid-questions",
-    title: "地理総合 1学期中間試験過去問",
-    date: "2026-01-13",
-    category: "geography",
-    tags: ["geography", "exam"],
-    excerpt: "地理総合の1学期中間試験の過去問 / 世界の地形、気候、人口分布に関する問題",
-    file: "blog/geography/geo-1-mid-questions.html",
-    protected: true,
-    readTime: 20
-  }
 ];
 
 /**
