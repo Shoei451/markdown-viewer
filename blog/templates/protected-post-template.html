@@ -154,7 +154,7 @@ passwordForm.addEventListener('submit', async (e) => {
       // メタデータを設定
       document.getElementById('post-title').innerHTML = `
         ${post.title}
-        <span class="protected-indicator">🔒 Protected</span>
+        <br><span class="protected-indicator">🔒 Protected</span>
       `;
       document.getElementById('post-date').textContent = new Date(post.created_at).toLocaleDateString('ja-JP');
       document.title = `${post.title} — Shoei451`;
