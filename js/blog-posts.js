@@ -113,6 +113,17 @@ const publicPosts = [
     file: "blog/programming/post-4.html",
     protected: false,
     readTime: 10
+  },
+  {
+    id: "post-4",
+    title: "JavaScriptの非同期処理",
+    date: "2026-01-05",
+    category: "protected",
+    tags: ["programming", "javascript"],
+    excerpt: "Promise、async/awaitの仕組みと使い方について解説",
+    file: "blog/programming/post-4.html",
+    protected: false,
+    readTime: 10
   }
 ];
 
