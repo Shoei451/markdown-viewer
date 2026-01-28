@@ -1,7 +1,7 @@
  /* Protected post specific styles */
     .protected-indicator {
       display: inline-block;
-      background: linear-gradient(135deg, var(--magenta) 0%, var(--violet) 100%);
+      background: linear-gradient(135deg, var(--green) 0%, var(--light-Green) 100%);
       color: #ffffff;
       padding: 6px 14px;
       border-radius: 20px;
