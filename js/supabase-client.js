@@ -59,11 +59,12 @@ class SupabaseClient {
 
   /**
    * 保護された記事の一覧を取得（パスワードなし、メタデータのみ）
+   * excerptとread_timeも含める
    */
   async getProtectedPostsMeta() {
     try {
       const response = await fetch(
-        `${this.supabaseUrl}/rest/v1/protected_posts?select=id,slug,title,category,tags,created_at`,
+        `${this.supabaseUrl}/rest/v1/protected_posts?select=id,slug,title,category,tags,excerpt,read_time,created_at`,
         {
           method: 'GET',
           headers: this.headers

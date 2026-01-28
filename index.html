@@ -140,9 +140,13 @@
       text-decoration: none;
     }
 
+    /* ========================================
+       Protected Card Styling (Supabase Green Theme)
+       ======================================== */
+    
     .blog-card.protected {
-      border-color: var(--magenta);
-      background: linear-gradient(135deg, var(--card-bg) 0%, var(--card-bg) 100%);
+      border-color: #3ECF8E;
+      background: var(--card-bg);
     }
 
     .blog-card.protected::before {
@@ -152,7 +156,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(211, 54, 130, 0.05) 0%, rgba(108, 113, 196, 0.05) 100%);
+      background: linear-gradient(135deg, rgba(62, 207, 142, 0.05) 0%, rgba(36, 179, 123, 0.05) 100%);
       pointer-events: none;
     }
 
@@ -163,23 +167,49 @@
     }
 
     .blog-card.protected:hover {
-      border-color: var(--magenta);
+      border-color: #3ECF8E;
+      box-shadow: 0 20px 40px rgba(62, 207, 142, 0.3);
     }
 
+    /* Protected Badge - Supabase色で右上に配置 */
     .protected-badge {
       position: absolute;
       top: 15px;
       right: 15px;
-      background: linear-gradient(135deg, var(--magenta) 0%, var(--violet) 100%);
+      background: linear-gradient(135deg, #3ECF8E 0%, #24B37B 100%);
       color: #ffffff;
-      padding: 5px 12px;
-      border-radius: 15px;
+      padding: 6px 14px;
+      border-radius: 20px;
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 4px;
-      box-shadow: 0 4px 15px rgba(211, 54, 130, 0.3);
+      gap: 5px;
+      box-shadow: 0 4px 15px rgba(62, 207, 142, 0.4);
+      z-index: 10;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    
+    /* バッジにアニメーション追加 */
+    .blog-card.protected:hover .protected-badge {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(62, 207, 142, 0.6);
+    }
+
+    /* Category Tag - Protectedバッジと重ならないように左側に配置 */
+    .blog-category {
+      display: inline-block;
+      background: var(--theme);
+      color: var(--secondary);
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      border: 1px solid var(--shadow);
+      position: relative;
+      z-index: 1;
+      width: fit-content;
     }
 
     .blog-date {
@@ -192,6 +222,10 @@
       gap: 5px;
       position: relative;
       z-index: 1;
+    }
+    
+    .blog-card.protected .blog-date {
+      color: #3ECF8E;
     }
 
     .blog-card h3 {
@@ -208,19 +242,6 @@
       line-height: 1.6;
       margin: 0 0 20px 0;
       flex-grow: 1;
-      position: relative;
-      z-index: 1;
-    }
-
-    .blog-category {
-      display: inline-block;
-      background: var(--theme);
-      color: var(--secondary);
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      margin-bottom: 10px;
-      border: 1px solid var(--shadow);
       position: relative;
       z-index: 1;
     }
@@ -270,7 +291,8 @@
     }
 
     .blog-card.protected .read-more {
-      color: var(--magenta);
+      color: #3ECF8E;
+      font-weight: 700;
     }
 
     .blog-card:hover .read-more {
@@ -300,6 +322,11 @@
       
       .blog-card h3 {
         font-size: 1.3rem;
+      }
+      
+      .protected-badge {
+        font-size: 0.7rem;
+        padding: 5px 10px;
       }
     }
   </style>
@@ -377,6 +404,9 @@ const tabs = [
   { id: 'math', label: '数学', icon: categoryIcons.math },
   { id: 'english', label: '英語', icon: categoryIcons.english },
   { id: 'history', label: '歴史', icon: categoryIcons.history },
+  { id: 'geography', label: '地理', icon: categoryIcons.geography },
+  { id: 'home-economics', label: '家庭基礎', icon: categoryIcons['home-economics'] },
+  { id: 'health', label: '保健', icon: categoryIcons.health },
   { id: 'programming', label: 'プログラミング', icon: categoryIcons.programming },
   { id: 'protected', label: 'Protected', icon: categoryIcons.protected }
 ];

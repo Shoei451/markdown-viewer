@@ -9,12 +9,19 @@ const tagLabels = {
   math: '数学',
   english: '英語',
   history: '歴史',
+  geography: '地理',
+  'home-economics': '家庭基礎',
+  health: '保健',
   programming: 'プログラミング',
   calculus: '微積分',
   presentation: 'プレゼン',
   wwii: '第二次世界大戦',
   javascript: 'JavaScript',
-  advanced: '応用'
+  advanced: '応用',
+  climate: '気候',
+  population: '人口',
+  nutrition: '栄養',
+  mental: 'メンタルヘルス'
 };
 
 /**
@@ -24,6 +31,9 @@ const categoryLabels = {
   math: '数学',
   english: '英語',
   history: '歴史',
+  geography: '地理',
+  'home-economics': '家庭基礎',
+  health: '保健',
   programming: 'プログラミング'
 };
 
@@ -45,14 +55,27 @@ const categoryIcons = {
   </svg>`,
   
   english: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="2" y1="12" x2="22" y2="12"></line>
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-  </svg>`,
+  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+</svg>`,
   
   history: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+  </svg>`,
+  
+  geography: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+  </svg>`,
+  
+  'home-economics': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+  </svg>`,
+  
+  health: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
   </svg>`,
   
   programming: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -113,17 +136,6 @@ const publicPosts = [
     file: "blog/programming/post-4.html",
     protected: false,
     readTime: 10
-  },
-  {
-    id: "post-4",
-    title: "JavaScriptの非同期処理",
-    date: "2026-01-05",
-    category: "protected",
-    tags: ["programming", "javascript"],
-    excerpt: "Promise、async/awaitの仕組みと使い方について解説",
-    file: "blog/programming/post-4.html",
-    protected: false,
-    readTime: 10
   }
 ];
 
@@ -135,13 +147,15 @@ const publicPosts = [
 function createPostCardHTML(post) {
   const categoryLabel = categoryLabels[post.category] || post.category;
   
-  let html = `
-    <div class="blog-category">${categoryLabel}</div>
-  `;
+  let html = '';
   
+  // Protected badge - 右上に配置
   if (post.protected) {
     html += `<div class="protected-badge">🔒 Protected</div>`;
   }
+  
+  // Category - 左側に配置（protectedバッジと重ならない）
+  html += `<div class="blog-category">${categoryLabel}</div>`;
   
   html += `
     <div class="blog-date">📅 ${post.date}</div>
@@ -241,10 +255,10 @@ async function loadProtectedPosts(supabaseClient) {
         date: new Date(post.created_at).toLocaleDateString('ja-JP'),
         category: post.category,
         tags: post.tags || [],
-        excerpt: `🔒 この記事は保護されています。パスワードを入力して閲覧してください。`,
+        excerpt: post.excerpt || `この記事はパスワードで保護されています。`,
         file: `blog/${post.category}/protected-${post.slug}.html`,
         protected: true,
-        readTime: 0
+        readTime: post.read_time || 0
       }));
     }
     return [];
