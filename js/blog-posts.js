@@ -105,37 +105,15 @@ const publicPosts = [
     readTime: 8
   },
   {
-    id: "post-2",
-    title: "英語プレゼンのコツ",
-    date: "2026-01-10",
-    category: "english",
-    tags: ["english", "presentation"],
-    excerpt: "学校でのプレゼンテーションで学んだ効果的な英語表現と構成方法について",
-    file: "blog/english/post-2.html",
-    protected: false,
-    readTime: 5
-  },
-  {
-    id: "post-3",
-    title: "第二次世界大戦の多角的視点",
-    date: "2026-01-08",
-    category: "history",
-    tags: ["history", "wwii"],
-    excerpt: "日本、アメリカ、ヨーロッパの視点から第二次世界大戦を考察。異なる歴史叙述の比較",
-    file: "blog/history/post-3.html",
-    protected: false,
-    readTime: 12
-  },
-  {
-    id: "post-4",
-    title: "JavaScriptの非同期処理",
-    date: "2026-01-05",
-    category: "programming",
-    tags: ["programming", "javascript"],
-    excerpt: "Promise、async/awaitの仕組みと使い方について解説",
-    file: "blog/programming/post-4.html",
-    protected: false,
-    readTime: 10
+    id: "geo-1-mid-questions",
+    title: "地理総合 1学期中間試験過去問",
+    date: "2026-01-13",
+    category: "geography",
+    tags: ["geography", "exam"],
+    excerpt: "地理総合の1学期中間試験の過去問 / 世界の地形、気候、人口分布に関する問題",
+    file: "blog/geography/geo-1-mid-questions.html",
+    protected: true,
+    readTime: 20
   }
 ];
 
