@@ -27,12 +27,50 @@
       border: 2px solid transparent;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blog-card.protected {
+      border-color: var(--magenta);
+      background: linear-gradient(135deg, var(--card-bg) 0%, var(--card-bg) 100%);
+    }
+
+    .blog-card.protected::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(211, 54, 130, 0.05) 0%, rgba(108, 113, 196, 0.05) 100%);
+      pointer-events: none;
     }
 
     .blog-card:hover {
       transform: translateY(-10px);
       box-shadow: 0 20px 40px var(--shadow);
       border-color: var(--accent);
+    }
+
+    .blog-card.protected:hover {
+      border-color: var(--magenta);
+    }
+
+    .protected-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: linear-gradient(135deg, var(--magenta) 0%, var(--violet) 100%);
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 4px 15px rgba(211, 54, 130, 0.3);
     }
 
     .blog-date {
@@ -43,6 +81,8 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      position: relative;
+      z-index: 1;
     }
 
     .blog-card h3 {
@@ -50,6 +90,8 @@
       color: var(--primary);
       margin: 0 0 15px 0;
       line-height: 1.4;
+      position: relative;
+      z-index: 1;
     }
 
     .blog-card p {
@@ -57,6 +99,21 @@
       line-height: 1.6;
       margin: 0 0 20px 0;
       flex-grow: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-category {
+      display: inline-block;
+      background: var(--theme);
+      color: var(--secondary);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      border: 1px solid var(--shadow);
+      position: relative;
+      z-index: 1;
     }
 
     .blog-tags {
@@ -64,6 +121,8 @@
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
     }
 
     .blog-tag {
@@ -82,6 +141,12 @@
       color: var(--accent);
       font-weight: 600;
       transition: gap 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-card.protected .read-more {
+      color: var(--magenta);
     }
 
     .blog-card:hover .read-more {
@@ -158,7 +223,6 @@
 </header>
 
 <main class="intro">
-  <!--<a href="index.html" class="back-link">Back to Home</a>-->
   <h2>Recent Posts</h2>
   <p>学習中の気づきやメモをまとめています。</p>
 </main>
@@ -170,6 +234,7 @@
   <button class="filter-btn" data-filter="english">英語</button>
   <button class="filter-btn" data-filter="history">歴史</button>
   <button class="filter-btn" data-filter="programming">プログラミング</button>
+  <button class="filter-btn" data-filter="protected">🔒 Protected</button>
 </section>
 
 <!-- Blog Posts Grid -->
@@ -182,104 +247,207 @@
 </footer>
 
 <script src="js/theme-toggle.js"></script>
+<script src="js/supabase-client.js"></script>
+
 <script>
-// Blog posts data
-const blogPosts = [
+// ==========================================
+// Configuration
+// ==========================================
+const SUPABASE_CONFIG = {
+  url: 'https://your-project.supabase.co',
+  anonKey: 'your-anon-key'
+};
+
+// Tag labels for display
+const tagLabels = {
+  math: '数学',
+  english: '英語',
+  history: '歴史',
+  programming: 'プログラミング',
+  calculus: '微積分',
+  presentation: 'プレゼン',
+  wwii: '第二次世界大戦',
+  javascript: 'JavaScript'
+};
+
+// Category labels
+const categoryLabels = {
+  math: '数学',
+  english: '英語',
+  history: '歴史',
+  programming: 'プログラミング'
+};
+
+// ==========================================
+// Public Blog Posts (stored in files)
+// ==========================================
+const publicPosts = [
   {
     id: "post-1",
     title: "微分積分の基礎",
     date: "2026-01-13",
+    category: "math",
     tags: ["math", "calculus"],
-    excerpt: "微分と積分の基本的な概念",
-    file: "blog/post-1.html"
+    excerpt: "微分と積分の基本的な概念を数式を使って解説。極限の定義から始めて導関数の計算方法まで。",
+    file: "blog/math/post-1.html",
+    protected: false
   },
   {
     id: "post-2",
     title: "英語プレゼンのコツ",
     date: "2026-01-10",
+    category: "english",
     tags: ["english", "presentation"],
     excerpt: "学校でのプレゼンテーションで学んだ効果的な英語表現と構成方法について",
-    file: "blog/post-2.html"
+    file: "blog/english/post-2.html",
+    protected: false
   },
   {
     id: "post-3",
     title: "第二次世界大戦の多角的視点",
     date: "2026-01-08",
+    category: "history",
     tags: ["history", "wwii"],
     excerpt: "日本、アメリカ、ヨーロッパの視点から第二次世界大戦を考察。異なる歴史叙述の比較",
-    file: "blog/post-3.html"
+    file: "blog/history/post-3.html",
+    protected: false
   },
   {
     id: "post-4",
     title: "JavaScriptの非同期処理",
     date: "2026-01-05",
+    category: "programming",
     tags: ["programming", "javascript"],
     excerpt: "Promise、async/awaitの仕組みと使い方について解説",
-    file: "blog/post-4.html"
+    file: "blog/programming/post-4.html",
+    protected: false
   }
 ];
 
-// Generate blog cards
+// ==========================================
+// Generate Blog Cards
+// ==========================================
 const blogGrid = document.getElementById('blog-grid');
+
+function createPostCard(post) {
+  const card = document.createElement('a');
+  card.href = post.file;
+  card.className = `blog-card${post.protected ? ' protected' : ''}`;
+  card.setAttribute('data-category', post.category);
+  card.setAttribute('data-tags', post.tags.join(' '));
+  
+  const categoryLabel = categoryLabels[post.category] || post.category;
+  
+  let cardHTML = `
+    <div class="blog-category">${categoryLabel}</div>
+  `;
+  
+  if (post.protected) {
+    cardHTML += `<div class="protected-badge">🔒 Protected</div>`;
+  }
+  
+  cardHTML += `
+    <div class="blog-date">📅 ${post.date}</div>
+    <h3>${post.title}</h3>
+    <div class="blog-tags">
+      ${post.tags.map(tag => `<span class="blog-tag">${tagLabels[tag] || tag}</span>`).join('')}
+    </div>
+    <p>${post.excerpt}</p>
+    <span class="read-more">${post.protected ? '🔓 パスワードを入力して読む' : '記事を読む →'}</span>
+  `;
+  
+  card.innerHTML = cardHTML;
+  return card;
+}
 
 function renderPosts(posts) {
   blogGrid.innerHTML = '';
-  
   posts.forEach(post => {
-    const card = document.createElement('a');
-    card.href = post.file;
-    card.className = 'blog-card';
-    card.setAttribute('data-tags', post.tags.join(' '));
-    
-    const tagLabels = {
-      math: '数学',
-      english: '英語',
-      history: '歴史',
-      programming: 'プログラミング',
-      calculus: '微積分',
-      presentation: 'プレゼン',
-      wwii: '第二次世界大戦',
-      javascript: 'JavaScript'
-    };
-    
-    card.innerHTML = `
-      <div class="blog-date">📅 ${post.date}</div>
-      <h3>${post.title}</h3>
-      <div class="blog-tags">
-        ${post.tags.map(tag => `<span class="blog-tag">${tagLabels[tag] || tag}</span>`).join('')}
-      </div>
-      <p>${post.excerpt}</p>
-      <span class="read-more">記事を読む</span>
-    `;
-    
-    blogGrid.appendChild(card);
+    blogGrid.appendChild(createPostCard(post));
   });
 }
 
-// Initial render
-renderPosts(blogPosts);
-
-// Filter functionality
-const filterBtns = document.querySelectorAll('.filter-btn');
-
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Update active state
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+// ==========================================
+// Load Protected Posts from Supabase
+// ==========================================
+async function loadProtectedPosts() {
+  try {
+    const supabaseClient = new SupabaseClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+    const result = await supabaseClient.getProtectedPostsMeta();
     
-    const filter = btn.getAttribute('data-filter');
-    
-    if (filter === 'all') {
-      renderPosts(blogPosts);
-    } else {
-      const filtered = blogPosts.filter(post => post.tags.includes(filter));
-      renderPosts(filtered);
+    if (result.success && result.posts.length > 0) {
+      const protectedPosts = result.posts.map(post => ({
+        id: post.slug,
+        title: post.title,
+        date: new Date(post.created_at).toLocaleDateString('ja-JP'),
+        category: post.category,
+        tags: post.tags || [],
+        excerpt: `🔒 この記事は保護されています。パスワードを入力して閲覧してください。`,
+        file: `blog/${post.category}/protected-${post.slug}.html`,
+        protected: true
+      }));
+      
+      return protectedPosts;
     }
-  });
-});
+    return [];
+  } catch (error) {
+    console.error('Error loading protected posts:', error);
+    return [];
+  }
+}
 
+// ==========================================
+// Initialize
+// ==========================================
+async function initialize() {
+  // Load protected posts
+  const protectedPosts = await loadProtectedPosts();
+  
+  // Combine all posts
+  const allPosts = [...publicPosts, ...protectedPosts].sort((a, b) => {
+    return new Date(b.date) - new Date(a.date);
+  });
+  
+  // Initial render
+  renderPosts(allPosts);
+  
+  // Setup filters
+  setupFilters(allPosts);
+}
+
+// ==========================================
+// Filter Functionality
+// ==========================================
+function setupFilters(allPosts) {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active state
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      const filter = btn.getAttribute('data-filter');
+      
+      let filtered;
+      if (filter === 'all') {
+        filtered = allPosts;
+      } else if (filter === 'protected') {
+        filtered = allPosts.filter(post => post.protected);
+      } else {
+        filtered = allPosts.filter(post => 
+          post.category === filter || post.tags.includes(filter)
+        );
+      }
+      
+      renderPosts(filtered);
+    });
+  });
+}
+
+// ==========================================
 // Animation on scroll
+// ==========================================
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -289,9 +457,17 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 
-document.querySelectorAll('.blog-card').forEach(card => {
-  observer.observe(card);
-});
+// Re-observe on render
+const originalRender = renderPosts;
+renderPosts = function(posts) {
+  originalRender(posts);
+  document.querySelectorAll('.blog-card').forEach(card => {
+    observer.observe(card);
+  });
+};
+
+// Start
+initialize();
 </script>
 
 </body>

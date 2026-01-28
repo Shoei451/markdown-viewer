@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protected Post — Shoei451</title>
+  <link rel="icon" type="image/png" href="../../images/favicon-md.png" />
+  <link rel="stylesheet" href="../../css/common.css" />
+  
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  
+  <style>
+    /* Protected post specific styles */
+    .protected-indicator {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--magenta) 0%, var(--violet) 100%);
+      color: #ffffff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-left: 10px;
+      box-shadow: 0 4px 15px rgba(211, 54, 130, 0.3);
+    }
+
+    .password-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    .password-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .password-dialog {
+      background: var(--card-bg);
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      border: 2px solid var(--magenta);
+    }
+
+    .password-dialog h2 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+    }
+
+    .password-dialog p {
+      color: var(--secondary);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .password-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .password-input-group {
+      margin-bottom: 20px;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 15px 20px;
+      border: 2px solid var(--base1);
+      border-radius: 10px;
+      font-size: 1.1rem;
+      background: var(--theme);
+      color: var(--primary);
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .password-input:focus {
+      outline: none;
+      border-color: var(--magenta);
+      box-shadow: 0 0 0 3px rgba(211, 54, 130, 0.1);
+    }
+
+    .password-submit {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--magenta) 0%, var(--violet) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .password-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(211, 54, 130, 0.4);
+    }
+
+    .password-submit:active {
+      transform: translateY(0);
+    }
+
+    .password-error {
+      color: var(--red);
+      margin-top: 15px;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .password-error.show {
+      display: block;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .loading-spinner {
+      border: 3px solid var(--theme);
+      border-top: 3px solid var(--magenta);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+      display: none;
+    }
+
+    .loading-spinner.show {
+      display: block;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Math rendering styles */
+    .katex {
+      font-size: 1.1em;
+    }
+
+    .katex-display {
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .math-error {
+      color: var(--red);
+      background: var(--theme);
+      padding: 10px;
+      border-radius: 5px;
+      border-left: 4px solid var(--red);
+      margin: 1rem 0;
+    }
+
+    .post-wrapper {
+      max-width: 850px;
+      margin: 60px auto 100px;
+      padding: 0 20px;
+    }
+
+    .post-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .post-meta {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      color: var(--secondary);
+      font-size: 0.95rem;
+    }
+
+    .post-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .post-tags {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .post-tag {
+      background: var(--accent);
+      color: #ffffff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .markdown-content {
+      background: var(--card-bg);
+      border-radius: 25px;
+      box-shadow: 0 15px 40px var(--shadow);
+      padding: 50px;
+      color: var(--content);
+      line-height: 1.8;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .markdown-content h1 {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin: 0 0 1.5rem 0;
+      font-weight: 700;
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 0.5rem;
+    }
+
+    .markdown-content h2 {
+      font-size: 2rem;
+      color: var(--primary);
+      margin: 2.5rem 0 1rem 0;
+      font-weight: 600;
+    }
+
+    .markdown-content h3 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin: 2rem 0 0.8rem 0;
+      font-weight: 600;
+    }
+
+    .markdown-content p {
+      margin: 1rem 0;
+      color: var(--secondary);
+      font-size: 1.05rem;
+    }
+
+    .markdown-content ul,
+    .markdown-content ol {
+      margin: 1rem 0 1rem 2rem;
+      color: var(--secondary);
+    }
+
+    .markdown-content li {
+      margin: 0.5rem 0;
+      line-height: 1.7;
+    }
+
+    .markdown-content a {
+      color: var(--accent);
+      text-decoration: underline;
+      transition: all 0.3s;
+    }
+
+    .markdown-content a:hover {
+      color: var(--primary);
+    }
+
+    .markdown-content code {
+      background: var(--theme);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.9em;
+      border: 1px solid var(--shadow);
+    }
+
+    .markdown-content pre {
+      background: var(--theme);
+      padding: 20px;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--shadow);
+    }
+
+    .markdown-content pre code {
+      background: none;
+      padding: 0;
+      border: none;
+    }
+
+    .markdown-content blockquote {
+      border-left: 4px solid var(--accent);
+      margin: 1.5rem 0;
+      padding: 1rem 1.5rem;
+      background: var(--theme);
+      border-radius: 0 12px 12px 0;
+      font-style: italic;
+    }
+
+    .markdown-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--shadow);
+    }
+
+    .markdown-content th {
+      background: var(--accent);
+      color: #ffffff;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .markdown-content td {
+      padding: 12px;
+      border-bottom: 1px solid var(--shadow);
+      color: var(--secondary);
+    }
+
+    .markdown-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      box-shadow: 0 8px 20px var(--shadow);
+    }
+
+    .markdown-content hr {
+      border: none;
+      border-top: 2px solid var(--accent);
+      margin: 2rem 0;
+      opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+      .password-dialog {
+        padding: 30px 25px;
+      }
+      
+      .markdown-content {
+        padding: 30px 25px;
+      }
+      
+      .markdown-content h1 { font-size: 2rem; }
+      .markdown-content h2 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Theme Toggle -->
+<span class="logo-switches">
+  <button id="theme-toggle" title="Toggle Theme">
+    <svg id="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+    <svg id="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </button>
+</span>
+
+<!-- Password Overlay -->
+<div class="password-overlay" id="password-overlay">
+  <div class="password-dialog">
+    <span class="password-icon">🔒</span>
+    <h2>この記事は保護されています</h2>
+    <p>閲覧するにはパスワードを入力してください</p>
+    
+    <form id="password-form">
+      <div class="password-input-group">
+        <input 
+          type="password" 
+          id="password-input" 
+          class="password-input" 
+          placeholder="パスワードを入力"
+          autocomplete="off"
+          required
+        />
+      </div>
+      <button type="submit" class="password-submit">
+        <span id="submit-text">記事を表示</span>
+        <div class="loading-spinner" id="loading-spinner"></div>
+      </button>
+    </form>
+    
+    <p class="password-error" id="password-error">
+      ⚠️ パスワードが正しくありません
+    </p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<main class="post-wrapper">
+  <a href="../../index.html" class="back-link">← Back to Blog</a>
+  
+  <div class="post-header">
+    <h1 id="post-title">
+      記事タイトル
+      <span class="protected-indicator">🔒 Protected</span>
+    </h1>
+    <div class="post-meta">
+      <span class="post-meta-item">📅 <span id="post-date">2026-01-13</span></span>
+      <span class="post-meta-item">⏱️ <span id="read-time">5</span> min read</span>
+    </div>
+    <div class="post-tags" id="post-tags">
+      <!-- Tags will be inserted here -->
+    </div>
+  </div>
+
+  <article class="markdown-content" id="markdown-content">
+    <!-- Markdown content will be loaded here after password verification -->
+    <div style="text-align: center; padding: 60px 20px; color: var(--secondary);">
+      <p>パスワードを入力して記事を表示してください</p>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <p>Get in touch: <a href="mailto:okamotoshoei451@gmail.com">okamotoshoei451@gmail.com</a></p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="../../js/theme-toggle.js"></script>
+<script src="../../js/supabase-client.js"></script>
+<script src="../../js/markdown-renderer.js"></script>
+
+<script>
+// ==========================================
+// Post Configuration
+// ==========================================
+const POST_CONFIG = {
+  slug: 'example-protected-post',  // Supabaseのslugと一致させる
+  category: 'math',                 // カテゴリ
+  SUPABASE_URL: 'https://your-project.supabase.co',
+  SUPABASE_ANON_KEY: 'your-anon-key'
+};
+
+// ==========================================
+// Initialize
+// ==========================================
+const supabaseClient = new SupabaseClient(
+  POST_CONFIG.SUPABASE_URL, 
+  POST_CONFIG.SUPABASE_ANON_KEY
+);
+
+const passwordForm = document.getElementById('password-form');
+const passwordInput = document.getElementById('password-input');
+const passwordError = document.getElementById('password-error');
+const passwordOverlay = document.getElementById('password-overlay');
+const loadingSpinner = document.getElementById('loading-spinner');
+const submitText = document.getElementById('submit-text');
+const contentElement = document.getElementById('markdown-content');
+
+// ==========================================
+// Password Form Handler
+// ==========================================
+passwordForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const password = passwordInput.value;
+  
+  // UI更新
+  passwordError.classList.remove('show');
+  loadingSpinner.classList.add('show');
+  submitText.style.display = 'none';
+  
+  try {
+    // Supabaseから記事を取得
+    const result = await supabaseClient.getProtectedPost(POST_CONFIG.slug, password);
+    
+    if (result.success) {
+      // 成功：記事を表示
+      const post = result.post;
+      
+      // メタデータを設定
+      document.getElementById('post-title').innerHTML = `
+        ${post.title}
+        <span class="protected-indicator">🔒 Protected</span>
+      `;
+      document.getElementById('post-date').textContent = new Date(post.created_at).toLocaleDateString('ja-JP');
+      document.title = `${post.title} — Shoei451`;
+      
+      // タグを表示
+      const tagsContainer = document.getElementById('post-tags');
+      tagsContainer.innerHTML = '';
+      post.tags.forEach(tag => {
+        const tagEl = document.createElement('span');
+        tagEl.className = 'post-tag';
+        tagEl.textContent = tag;
+        tagsContainer.appendChild(tagEl);
+      });
+      
+      // Markdownをレンダリング
+      await markdownRenderer.render(post.content, contentElement);
+      
+      // オーバーレイを非表示
+      passwordOverlay.classList.add('hidden');
+      
+      // セッションストレージに保存（リロード時に再入力不要）
+      sessionStorage.setItem(`post_${POST_CONFIG.slug}`, password);
+      
+    } else {
+      // 失敗：エラー表示
+      passwordError.classList.add('show');
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+    
+  } catch (error) {
+    console.error('Error:', error);
+    passwordError.textContent = '⚠️ エラーが発生しました';
+    passwordError.classList.add('show');
+  } finally {
+    // UI復元
+    loadingSpinner.classList.remove('show');
+    submitText.style.display = 'inline';
+  }
+});
+
+// ==========================================
+// Auto-load if password exists in session
+// ==========================================
+window.addEventListener('DOMContentLoaded', async () => {
+  const savedPassword = sessionStorage.getItem(`post_${POST_CONFIG.slug}`);
+  
+  if (savedPassword) {
+    passwordInput.value = savedPassword;
+    passwordForm.dispatchEvent(new Event('submit'));
+  } else {
+    // フォーカス
+    passwordInput.focus();
+  }
+});
+</script>
+
+</body>
+</html>
