@@ -33,10 +33,10 @@
 1. 領域(領土)の形態には単節国と複節国がある。複節国のア、イについて答えなさい。  
 * ア：「地図-1」中のAはある国の飛び地である。飛び地の名称と領有する国名を答え、さらに隣接するOの国名を答えなさい。(完答)  
 * イ：「地図-2」中の領域C,D に関して解答欄の様式に従い答えなさい。またEの海洋名を答えなさい。
-
+| 地図 - 1 | 地図 - 2 |
+| :---- | :---- |
 | ![](https://www.dropbox.com/scl/fi/9plrzfiz36pvsh5e60iqz/enclave-map-1.jpg?rlkey=kxat071p2z6exyvoym82lzwks&st=1cmnikdl&raw=1) | ![](https://www.dropbox.com/scl/fi/jk54iamxcjc8m0xrxf98y/enclave-map-2.jpg?rlkey=ciknpahi8dps037q2n4p7a3f3&st=pvxbcqw1&raw=1)
  |
-| :---- | :---- |
 
 2. 租借地について、次のア〜ウに答えなさい。  
 * ア、USAがカリブ海の国にもつ租借地名と相手国名を答えなさい。  
@@ -74,12 +74,14 @@
 * B.この図中に見られる山脈国境名を答えなさい。また山脈中にある小国名を答えなさい。  
 * C.図中の両国の国境は自然的国境と人為的国境からなるが、その自然的国境名(固有名詞)と人為的国境を強化した理由を答えなさい。
 
-![][image3]
+![](https://www.dropbox.com/scl/fi/bwsbmgmi6wmoj3bfq4egl/borders.jpg?rlkey=3aizae7qzc5s3odydhoql80b4&st=vkl14c3n&raw=1)
 
 ## **問7**
 
 **右の図中のA〜Cは、地中海東部からカスピ海にかけての国境の一部を太線で描いたものである。アゼルバイジャン共和国が南にある山脈をA〜Cから選び、アルメニアにあるアゼルバイジャン共和国の飛び地名を答えなさい。(完答)**  
-![][image4]
+
+![](https://www.dropbox.com/scl/fi/hj7wsuoxhml2tddivgvc4/caucasus.jpg?rlkey=j6nk3vj4dnl8qsjsce2u2n3df&st=al8u0mq6&raw=1)
+
 
 # **2**
 
@@ -112,14 +114,17 @@
 
 | 記号 | 画像 |
 | :---- | :--- |
-| ア | ![image5](https://upload.wikimedia.org/wikipedia/commons/5/5e/Dokdo_Photo.jpg) |
-| イ | ![image6]("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Okinotorishima20070602.jpg/330px-Okinotorishima20070602.jpg") | 
-| ウ | ![image7](https://yonagunitour.world-tours.jp/wp-content/uploads/2025/05/31086863_m-e1748238922515-768x575.jpg) |
-| エ | ![](https://dl.dropboxusercontent.com/scl/fi/qmyaydp0mx11vhqinxmj3/minamitorishima.jpg) |
-| オ | ![https://mainichi.jp/articles/20210426/k00/00m/030/194000c][image9] |
+| ア | ![](https://www.dropbox.com/scl/fi/7fp3qk73nx3v0cyq7bcg9/takeshima.jpg?rlkey=se9iftzjkmkv6skli0ipoaoic&st=c0hss5hr&raw=1)
+ |
+| イ | ![](https://www.dropbox.com/scl/fi/z5e56rz944lkn3gurmyix/okinotorishima.jpg?rlkey=hpqi0n0ggedrcc7b3ox4ami6q&st=ckzbajyf&raw=1)
+ | 
+| ウ | <img src="https://www.dropbox.com/scl/fi/v1plsgadi4p4kfadb7m3t/yonagunijima.jpg?rlkey=g4np7hldavna5k7o3uflfh9qo&st=i3wbw9to&raw=1" width="350">
+ |
+| エ | ![](https://www.dropbox.com/scl/fi/qmyaydp0mx11vhqinxmj3/minamitorishima.jpg?rlkey=rpsnopgu9bgwagvazsu810415&st=is3qwqqd&raw=1)
+ |
+| オ | <img src="https://www.dropbox.com/scl/fi/m7hs2q6atkxwkwngph7u4/senkaku.jpg?rlkey=4iv1tfcj3prv9ncyk16t8r2wb&st=qxtd2z4v&raw=1" width="350"> |
 
-![favicon](image1.jpg)
-![][image10]
+![](https://www.dropbox.com/scl/fi/abvjub250y1k8nnx79viz/japan-territory.jpg?rlkey=0z0ciho0oyili2e635jhy2z93&st=8wck1lc7&raw=1)
 
 ## **問3**
 
@@ -130,7 +135,7 @@
 * ウ、19世紀、新たにB島からC島までを日本領とした条約名を答えなさい。  
 * エ、B島とC島の名称を漢字またはカタカナでそれぞれ答えなさい。
 
-![][image11]
+![](https://www.dropbox.com/scl/fi/qu2384qwopl2r4vag2yaf/northen-territories.jpg?rlkey=1mrk3qcgdef3gl57shhrvlbbt&st=jd934j4f&raw=1)
 
 # **3**
 
@@ -240,7 +245,8 @@
 ## **問1**
 
 **図-Iの1〜10の河川名・島名を語群ア〜セより選び記号で答えなさい。また1・12の海峡名を答えなさい。(完答)**  
-![][image12]
+
+![](https://www.dropbox.com/scl/fi/qfb94agl16qfmfesk8bwl/southeast-asia-1.jpg?rlkey=6ryu0fc1ka866wzekwapji38u&st=o3dvevr3&raw=1)
 
 ア、ルソン島　イ、ガンジス川　ウ、セイロン島　エ、カリマンタン島　オ、スマトラ島　カ、西沙諸島　キ、バリ島　ク、エーヤワディー川　ケ、ミンダナオ島　コ、ハイナン島　サ、南沙諸島　シ、メコン川　ス、ジャワ島　セ、チャオプラヤ川
 
@@ -256,7 +262,8 @@
 ## **問3**
 
 **図-II中の凡例◎★の農産物名を答えなさい。**  
-![][image13]
+
+![](https://www.dropbox.com/scl/fi/xan1u3qxfr86rap5v6p49/southeast-asia-2.jpg?rlkey=2ahw340dlqs3vojx1stntkua8&st=7ao6nvg5&raw=1)
 
 # **5**
 
@@ -264,13 +271,16 @@
 
 ## **問1**
 
-**図-1の1〜10の山脈名・河川名を語群ア〜セより選び記号で答えなさい。また14・15の海洋名を答えなさい。**  
-![][image14]
+**図-1の1〜10の山脈名・河川名を語群ア〜セより選び記号で答えなさい。また14・15の海洋名を答えなさい。**
+
+![](https://www.dropbox.com/scl/fi/km2tb0p3da6amh90fij2j/europe-1.jpg?rlkey=dd2085hded42fb31gwa975de4&st=i2t7pzse&raw=1)
+
 
 ア、ヴォルガ川　イ、ライン川　ウ、ペニン山脈　エ、アペニン山脈　オ、ディナルアルプス　カ、テムズ川　キ、ピレネー山脈　ク、エルベ川　ケ、スカンディナビア山脈　コ、エニセイ川　サ、アルプス山脈　シ、エルツ山脈　ス、セーヌ川　セ、ドナウ川
 
 ## **問2**
 
 右の図IIはヨーロッパの宗教分布であるが、凡例A〜Dの宗教名を答えなさい。ただし、キリスト教については、2つに分けて答えなさい。  
+
 ![](https://www.dropbox.com/scl/fi/n63g1otcik7daotxrm63m/europe-religion.jpg?rlkey=ijpgxcn2tkh3hf6xjmh9n7umw&st=x3a85imm&raw=1)
 図-II
