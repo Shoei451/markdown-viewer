@@ -153,6 +153,7 @@ body {
     margin-top: 15px;
     font-size: 0.9rem;
     display: none;
+    white-space: pre-line;
 }
 
 .status-message.success {
@@ -166,6 +167,13 @@ body {
     background: rgba(220, 50, 47, 0.2);
     color: var(--red);
     border: 1px solid var(--red);
+    display: block;
+}
+
+.status-message.warning {
+    background: rgba(181, 137, 0, 0.2);
+    color: var(--yellow);
+    border: 1px solid var(--yellow);
     display: block;
 }
 
@@ -185,10 +193,13 @@ body {
 
 .example-box code {
     background: var(--entry);
-    padding: 2px 6px;
+    padding: 4px 8px;
     border-radius: 4px;
     color: var(--primary);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    word-break: break-all;
+    display: block;
+    margin: 5px 0;
 }
 
 .instruction-list {
@@ -210,6 +221,28 @@ body {
     color: var(--green);
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+.info-box {
+    background: rgba(42, 161, 152, 0.1);
+    border: 1px solid var(--cyan);
+    border-radius: 6px;
+    padding: 15px;
+    margin: 15px 0;
+    color: var(--primary);
+    line-height: 1.6;
+}
+
+.info-box strong {
+    color: var(--cyan);
+}
+
+.info-box code {
+    background: var(--entry);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--cyan);
+    font-size: 0.9rem;
 }
 
 footer {
@@ -267,6 +300,12 @@ footer {
 <!-- Main Content -->
 <div class="converter-container">
     
+    <!-- Important Notice -->
+    <div class="info-box">
+        <strong>⚠️ 重要：</strong> Dropboxの新しいリンク形式（<code>/scl/</code>で始まるもの）では<code>rlkey</code>パラメータが必須です。
+        このツールは<code>rlkey</code>を保持したまま、<code>dl=0</code>を<code>raw=1</code>に変換して画像を直接表示できるようにします。
+    </div>
+    
     <!-- Instructions -->
     <div class="tool-section">
         <h2>使い方</h2>
@@ -278,11 +317,15 @@ footer {
         </ul>
         
         <div class="example-box">
-            <h4>入力例（Dropbox共有リンク）：</h4>
+            <h4>入力例1（古い形式 - /s/）：</h4>
             <code>https://www.dropbox.com/s/abc123def/image.png?dl=0</code>
+            <h4 style="margin-top: 10px;">→ 出力：</h4>
+            <code>![](https://www.dropbox.com/s/abc123def/image.png?raw=1)</code>
             
-            <h4 style="margin-top: 15px;">出力例（Markdown）：</h4>
-            <code>![](https://dl.dropboxusercontent.com/s/abc123def/image.png)</code>
+            <h4 style="margin-top: 15px;">入力例2（新しい形式 - /scl/ + rlkey）：</h4>
+            <code>https://www.dropbox.com/scl/fi/abc123/image.png?rlkey=xyz789&dl=0</code>
+            <h4 style="margin-top: 10px;">→ 出力：</h4>
+            <code>![](https://www.dropbox.com/scl/fi/abc123/image.png?rlkey=xyz789&raw=1)</code>
         </div>
     </div>
     
@@ -293,15 +336,15 @@ footer {
         
         <div class="input-group">
             <label for="inputLinks">Dropboxリンク：</label>
-            <textarea id="inputLinks" placeholder="https://www.dropbox.com/s/abc123def/image1.png?dl=0&#x0A;https://www.dropbox.com/s/xyz789ghi/image2.jpg?dl=0"></textarea>
+            <textarea id="inputLinks" placeholder="https://www.dropbox.com/scl/fi/abc123/image1.png?rlkey=xyz789&dl=0&#x0A;https://www.dropbox.com/s/def456/image2.jpg?dl=0"></textarea>
         </div>
         
         <div class="button-group">
             <button class="btn btn-primary" onclick="convertLinks()">
-                Convert
+                🔄 変換
             </button>
             <button class="btn btn-secondary" onclick="clearAll()">
-                Clear
+                🗑️ クリア
             </button>
         </div>
         
@@ -320,7 +363,7 @@ footer {
         
         <div class="button-group">
             <button class="btn btn-success" onclick="copyToClipboard()" id="copyBtn" disabled>
-                Copy to Clipboard
+                📋 クリップボードにコピー
             </button>
         </div>
         
@@ -378,6 +421,7 @@ function convertLinks() {
     
     const converted = [];
     const errors = [];
+    const warnings = [];
     
     links.forEach((link, index) => {
         try {
@@ -387,22 +431,31 @@ function convertLinks() {
                 return;
             }
             
-            // Convert the link
             let newLink = link;
             
-            // Replace www.dropbox.com with dl.dropboxusercontent.com
-            newLink = newLink.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+            // Parse URL to preserve rlkey parameter
+            const url = new URL(link);
             
-            // Remove ?dl=0 or similar query parameters
-            newLink = newLink.replace(/\?dl=\d+/, '');
-            newLink = newLink.replace(/\?.*$/, ''); // Remove any other query params
+            // Check if rlkey exists (only for /scl/ links)
+            const hasRlkey = url.searchParams.has('rlkey');
+            const isNewFormat = link.includes('/scl/');
+            
+            if (isNewFormat && !hasRlkey) {
+                warnings.push(`行 ${index + 1}: rlkeyパラメータがありません（403エラーの可能性）`);
+            }
+            
+            // Change dl parameter to raw=1
+            url.searchParams.delete('dl');
+            url.searchParams.set('raw', '1');
+            
+            newLink = url.toString();
             
             // Create Markdown image syntax
             const markdown = `![](${newLink})`;
             converted.push(markdown);
             
         } catch (error) {
-            errors.push(`行 ${index + 1}: 変換エラー`);
+            errors.push(`行 ${index + 1}: 変換エラー - ${error.message}`);
         }
     });
     
@@ -417,17 +470,26 @@ function convertLinks() {
         preview.textContent = output;
         
         // Show success message
-        statusMessage.className = 'status-message success';
-        statusMessage.textContent = `✓ ${converted.length}個のリンクを変換しました`;
+        if (warnings.length === 0 && errors.length === 0) {
+            statusMessage.className = 'status-message success';
+            statusMessage.textContent = `✓ ${converted.length}個のリンクを変換しました`;
+        } else if (warnings.length > 0) {
+            statusMessage.className = 'status-message warning';
+            let msg = `⚠️ ${converted.length}個のリンクを変換しました`;
+            if (warnings.length > 0) {
+                msg += '\n\n警告:\n' + warnings.join('\n');
+            }
+            statusMessage.textContent = msg;
+        }
         
-        if (errors.length > 0) {
-            statusMessage.textContent += `（${errors.length}個のエラー）`;
+        if (errors.length > 0 && converted.length > 0) {
+            statusMessage.textContent += `\n\n（${errors.length}個のエラー）`;
         }
     }
     
     if (errors.length > 0 && converted.length === 0) {
         statusMessage.className = 'status-message error';
-        statusMessage.textContent = '⚠️ 変換できませんでした\n' + errors.join('\n');
+        statusMessage.textContent = '⚠️ 変換できませんでした\n\n' + errors.join('\n');
         outputTextarea.value = '';
         copyBtn.disabled = true;
         previewSection.style.display = 'none';
@@ -444,8 +506,17 @@ function copyToClipboard() {
     
     try {
         document.execCommand('copy');
+        const previousMessage = statusMessage.textContent;
+        const previousClass = statusMessage.className;
+        
         statusMessage.className = 'status-message success';
         statusMessage.textContent = '✓ クリップボードにコピーしました！';
+        
+        // Restore previous message after 2 seconds
+        setTimeout(() => {
+            statusMessage.className = previousClass;
+            statusMessage.textContent = previousMessage;
+        }, 2000);
         
         // Reset selection
         window.getSelection().removeAllRanges();
@@ -465,7 +536,7 @@ function clearAll() {
     document.getElementById('previewSection').style.display = 'none';
 }
 
-// Auto-convert on Enter key in input
+// Auto-convert on Ctrl+Enter in input
 document.getElementById('inputLinks').addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'Enter') {
         convertLinks();
